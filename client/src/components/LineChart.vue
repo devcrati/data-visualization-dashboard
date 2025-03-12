@@ -43,7 +43,21 @@ const options = {
     },
     title: {
       display: true,
-      text: 'Monthly Statistics'
+      text: 'Monthly Revenue'
+    },
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          return `Revenue: $${context.raw.toFixed(2)}B`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      ticks: {
+        callback: (value) => `$${value}B`
+      }
     }
   }
 };

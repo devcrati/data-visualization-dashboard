@@ -1,18 +1,18 @@
 <template>
   <div class="stats-summary">
-    <h2>Summary Statistics</h2>
+    <h2>Revenue Statistics</h2>
     <div class="stats-grid">
       <div class="stat-card">
-        <h3>Average</h3>
-        <p>{{ average.toFixed(2) }}</p>
+        <h3>Total Revenue</h3>
+        <p>${{ formatCurrency(totalRevenue) }}B</p>
       </div>
       <div class="stat-card">
-        <h3>Maximum</h3>
-        <p>{{ maximum }}</p>
+        <h3>Average Monthly</h3>
+        <p>${{ formatCurrency(averageMonthly) }}B</p>
       </div>
       <div class="stat-card">
-        <h3>Minimum</h3>
-        <p>{{ minimum }}</p>
+        <h3>Highest Month</h3>
+        <p>${{ formatCurrency(highestMonth) }}B</p>
       </div>
     </div>
   </div>
@@ -22,25 +22,29 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  stats: {
+  totalRevenue: {
+    type: Number,
+    required: true
+  },
+  monthlyData: {
     type: Array,
     required: true
   }
 });
 
-const average = computed(() => {
-  if (!props.stats.length) return 0;
-  return props.stats.reduce((acc, curr) => acc + curr.value, 0) / props.stats.length;
+const formatCurrency = (value) => {
+  return (value / 1e9).toFixed(2);
+};
+
+const averageMonthly = computed(() => {
+  if (!props.monthlyData.length) return 0;
+  const total = props.monthlyData.reduce((acc, curr) => acc + curr.amount, 0);
+  return total / props.monthlyData.length;
 });
 
-const maximum = computed(() => {
-  if (!props.stats.length) return 0;
-  return Math.max(...props.stats.map(stat => stat.value));
-});
-
-const minimum = computed(() => {
-  if (!props.stats.length) return 0;
-  return Math.min(...props.stats.map(stat => stat.value));
+const highestMonth = computed(() => {
+  if (!props.monthlyData.length) return 0;
+  return Math.max(...props.monthlyData.map(data => data.amount));
 });
 </script>
 
@@ -50,7 +54,6 @@ const minimum = computed(() => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  color: #41B883;
 }
 
 .stats-grid {

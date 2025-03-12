@@ -1,9 +1,12 @@
 <template>
   <div class="dashboard">
-    <h1>Data Visualization Dashboard</h1>
+    <h1>Revenue Dashboard</h1>
     <div class="dashboard-grid">
       <LineChart :chartData="chartData" />
-      <StatsSummary :stats="stats" />
+      <StatsSummary 
+        :totalRevenue="metadata.allTimeRevenue" 
+        :monthlyData="revenueData" 
+      />
     </div>
   </div>
 </template>
@@ -14,25 +17,40 @@ import axios from 'axios';
 import LineChart from '../components/LineChart.vue';
 import StatsSummary from '../components/StatsSummary.vue';
 
-const stats = ref([]);
+const revenueData = ref([]);
+const metadata = ref({});
 const chartData = ref(null);
+
+
+const formatDate = (timestamp) => {
+  return new Date(timestamp).toLocaleDateString('en-US', { 
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
+const formatAmount = (amount) => {
+  return amount / 1e9; // Convert to billions for better readability
+};
 
 const fetchData = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/stats');
-    stats.value = response.data;
+    const response = await axios.get('http://localhost:3000/api/revenue');
+    revenueData.value = response.data.results;
+    metadata.value = response.data.metadata;
     
     chartData.value = {
-      labels: response.data.map(item => item.month),
+      labels: response.data.results.map(item => formatDate(item.start)),
       datasets: [{
-        label: 'Monthly Values',
-        data: response.data.map(item => item.value),
+        label: 'Revenue (Billions)',
+        data: response.data.results.map(item => formatAmount(item.amount)),
         borderColor: '#41B883',
-        fill: false
+        fill: false,
+        tension: 0.4
       }]
     };
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error fetching revenue data:', error);
   }
 };
 
