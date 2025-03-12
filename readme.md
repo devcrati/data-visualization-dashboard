@@ -1,5 +1,8 @@
 # Data Visualization Dashboard
 
+![image](https://github.com/user-attachments/assets/62531481-b9df-402a-bbc3-43b2194d8aa2)
+
+
 ## Overview
 This project implements a data visualization dashboard that displays network performance metrics using Vue.js for the frontend and Node.js for the backend. The dashboard provides interactive visualizations of network statistics, focusing on delivering a clean, responsive, and user-friendly interface.
 
